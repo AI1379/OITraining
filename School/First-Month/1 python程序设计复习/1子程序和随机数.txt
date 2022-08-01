@@ -1,0 +1,38 @@
+随机数的生成：
+x=random.randint(a,b)   随机生成一个[a,b]的整数
+x=random.random()  随机生成一个[0,1) 的实数
+
+子程序
+def 函数名(参数表):
+	<主体>
+	return 结果
+
+举一
+写一个子程序求两个数的和
+def su(x,y):
+	c=x+y    #此时的c,x,y在主程序中无法访问
+	return c
+a=int(input())
+b=int(input())
+print(su(a,b))
+
+举二
+写一个子程序判质
+def prime(x):
+	for i in range(2,x):
+	if (x%i==0):
+		 return Fasle
+	return True
+a=int(input())
+if (prime(a)==True):
+	print("yes")
+else:
+	print("no")
+
+练习题
+1，输入N，然后生成N个随机整数（1到100之间）放在列表中，最后输出平均数。
+
+2，输入N，利用子程序判质，然后输出N以内有多少对相邻奇数都是质数。
+
+3，写一个子程序，用以求一个数的所有数字之和。
+提示：while语句可用

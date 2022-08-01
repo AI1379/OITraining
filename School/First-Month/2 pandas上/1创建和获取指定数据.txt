@@ -1,0 +1,64 @@
+创建 DataFrame
+
+#使用列表创建 DataFrame 对象
+import pandas as pd
+data = [["王五", "男", 8], ["张三", "女", 6]]  #其实两个列表就是两行数据
+df = pd.DataFrame(data, columns=["姓名", "性别", "年龄"])  #设置列标头
+print(df)
+你会在屏幕上看到
+     姓名 性别  年龄 < colomns
+0   王五  男     8      <values
+1   张三  女     6
+ ^
+index
+
+# 用字典创建， index 值默认是 0 开始的整数
+dic = {'标识':['Apple','Microsoft','Tencent'],'名称':['苹果','微软','腾讯'],'市值':[158100,136800,45100]}
+df1 = pd.DataFrame(dic)
+'''         名称 标识 市值
+0 苹果 Apple 158100
+1 微软 Microsoft 136800
+2 腾讯 Tencent 45100
+'''
+# 指定索引值
+df2 = pd.DataFrame(dic, index=['row1','row2','row3'])
+'''         标识 名称 市值
+row1 Apple 苹果 158100
+row2 Microsoft 微软 136800
+row3 Tencent 腾讯 45100
+'''
+# 指定列的顺序
+df3 = pd.DataFrame(dic, columns=['名称','市值','标识'])
+''' 名称 市值 标识
+0 苹果 158100 Apple
+1 微软 136800 Microsoft
+2 腾讯 45100 Tencent
+'''
+• 获取各个列的名称
+df1.columns
+• 获取各个行的名称（索引值）
+df1.index
+• 获取所有值
+df1.values
+• 行列转置
+df1.T
+
+获 取 指 定 数 据
+• 预览前（后） x 行数据
+df1.head(x) # x 表示行数
+df1.tail(x) # 同上
+• DataFrame 切片
+df1[0:2] # 第 0、 1 两行记录
+• 通过列标题获取数据
+df1['名称'] # 一列数据
+df1[['名称','标识']] # 多列列数据
+
+
+练习题
+1，类似例题，自拟一个字典，字典的索引分别为姓名、性别、身高、体重（详细数据自编）再以此字典生成一个DataFrame并输出它。
+
+2，请分别输出第1题得到的DataFrame的各列名称，各索引，以及所有值，以及转置矩阵。
+
+3，请分别输出第1题得到的DataFrame的前3行，后三行，最中间1行。
+
+4，请一次性输出第1题得到的DataFrame的身高和体重列（其余不能输出）。

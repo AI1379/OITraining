@@ -1,0 +1,41 @@
+Excel 文 件 读 写
+# 提供 Excel 文件名即可打开
+# sheet_name 是指第几张工作表，默认是 0，即第 1 张
+pd.read_excel("文件名.xlsx"[, sheet_name=0])
+# 提供 Excel 文件名即可新建，并写入 df 中的数据
+df.to_excel("文件名.xlsx")
+代码
+import pandas as pd
+df=pd.read_excel("高二技术.xlsx")
+print(df)
+
+csv 文 件 读 写
+“.csv”文件可以认为是文本文件，默认用逗号分隔
+Excel 中的每列数据
+# sep 表示列分隔符是什么，默认是逗号
+pd.read_csv("文件名.csv"[, sep=","])
+# 将 df 写入 csv 文件
+df.to_csv("文件名.csv")
+
+txt 文件读取
+f=open("xxxx.txt")    #必须先打开
+for line in f.readlines():   #f.readlines()表示txt中的所有行
+	<line是每行读入的那个字符串>
+
+f.close  #必须要关闭
+也可以按如下写
+lines=f.readlines()
+for word in lines：
+	<word是每行读入的那个字符串>
+
+练习题
+1，读取"高二技术.xlsx"文件，排序出前20名后输出DataFrame
+
+2，读取"高二技术.csv"文件，利用groupby输出各班平均分
+
+3，读取"高二技术.txt"文件，利用字符串操作，计算有多少个95分以上的同学。
+
+4，读取"高二技术.txt"文件，利用字符串操作，将95分以上的同学的信息加入三个列表（班级，名字，分数各一个）。
+输出1到12各班的95分以上的人数。
+
+5，读取"高二技术.csv"文件，利用条件检索和groupby输出各班95分以上的人的最高分，最低分和平均分

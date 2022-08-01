@@ -1,0 +1,5 @@
+.virtualenv/
+**/**.exe
+**/**.o
+**/**.zip
+**/**.rar

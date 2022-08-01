@@ -1,0 +1,47 @@
+groupby() 对列或行中的数据进行分组，然后对每组
+数据进行操作
+df = pd.DataFrame({'Animal': ['鹰', '鹰', '禽', '禽'],'Name': ['秃鹰', '隼', '雁', '鸭'],'Max Speed': [200, 390, 60, 1]})
+df的结果是 ：
+     Animal Name Max Speed
+0      鹰        秃鹰       200
+1      鹰        隼           390
+2      禽        雁            60
+3      禽        鸭             1
+'''
+df.groupby('Animal').mean()
+'''Animal Max Speed
+     禽          30.5
+     鹰          295.0
+'''
+# 统计每种动物的个数
+df.groupby('Animal').count()
+'''Animal Name Max Speed
+      禽         2             2
+      鹰         2             2
+'''
+# 上例每列都统计了，没必要；统计单列可以：
+df.groupby("Animal")['Name'].count()
+'''Animal
+禽    2
+鹰    2
+Name: Name, dtype: int64
+
+条件查询
+输出速度大于200的鸟
+df[df['speed']>0]
+
+
+练习题
+df = pd.DataFrame({'Animal': ['鹰', '鹰', '禽', '禽'],'Name': ['秃鹰', '隼', '雁', '鸭'],'Max Speed': [200, 390, 60, 1]})
+
+1，根据上面字典，再根据自己现有的知识，加入3行信息。生成DataFrame后输出。
+
+2，利用第1题的DataFrame，分别输出鹰类和禽类的最大飞行速度，以及最小飞行速度。
+
+3，利用第1题的DataFrame，输出全部飞行速度在100以上的动物。
+
+4，利用第1题的DataFrame，输出全部飞行速度在100以上的禽类。
+
+
+
+
