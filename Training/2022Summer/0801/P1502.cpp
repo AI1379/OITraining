@@ -1,5 +1,8 @@
-#include<iostream>
-#include<algorithm>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
+
 using namespace std;
 #define ll long long
 const ll MAXN = 10010;
@@ -16,6 +19,9 @@ SegtNode segt[MAXN * 4];
 ScanLine stars[MAXN * 2];
 ll tmp[MAXN * 2];
 void buildSegt(ll curr, ll l, ll r) {
+  if (l == r) {
+    return;
+  }
   segt[curr].beg = l;
   segt[curr].end = r;
   segt[curr].tag = 0;
@@ -39,32 +45,48 @@ void modify(ll curr, ll l, ll r, ll delta) {
     segt[curr].tag += delta;
     return;
   }
+  ll mid = (segt[curr].beg + segt[curr].end) / 2;
+  pushDown(curr);
+  if (l <= mid) {
+    modify(curr * 2, l, r, delta);
+  }
+  if (mid < r) {
+    modify(curr * 2 + 1, l, r, delta);
+  }
+  pushUp(curr);
 }
 void solve() {
   ll x, y;
+  ll ans = 0;
+  memset(segt, 0, sizeof(segt));
+  memset(stars, 0, sizeof(stars));
   cin >> n >> w >> h;
   for (int i = 1; i <= n; i++) {
     cin >> x >> y >> l[i];
-    stars[i] = (ScanLine) {
-      x, y, y + h - 1, l[i]
-    };
-    stars[i + n] = (ScanLine) {
-      x + w - 1, y, y + h - 1, -l[i]
-    };
+    stars[i] = (ScanLine){x, y, y + h - 1, l[i]};
+    stars[i + n] = (ScanLine){x + w - 1, y, y + h - 1, -l[i]};
     tmp[i] = y;
     tmp[i + n] = y + h - 1;
   }
   sort(tmp + 1, tmp + n + 1);
-  sort(stars + 1, stars + n + 1, [](const ScanLine & lhs, const ScanLine & rhs)->bool {
-    if (lhs.pos == rhs.pos)return lhs.val > rhs.val;
-    return lhs.pos < rhs.pos;
-  });
-  ll tot = unique(tmp + 1, tmp + n + 1) - tmp - 1;
+  sort(stars + 1, stars + n + 1,
+       [](const ScanLine &lhs, const ScanLine &rhs) -> bool {
+         if (lhs.pos == rhs.pos)
+           return lhs.val > rhs.val;
+         return lhs.pos < rhs.pos;
+       });
+  ll tot = unique(tmp + 1, tmp + 2 * n + 1) - tmp - 1;
   for (int i = 1; i <= 2 * n; i++) {
     stars[i].lower = lower_bound(tmp + 1, tmp + tot + 1, stars[i].lower) - tmp;
     stars[i].upper = lower_bound(tmp + 1, tmp + tot + 1, stars[i].upper) - tmp;
   }
   buildSegt(1, 1, tot);
+  for (int i = 1; i <= 2 * n; i++) {
+    modify(1, stars[i].lower, stars[i].upper, stars[i].val);
+    ans = max(ans, segt[1].val);
+  }
+  cout << ans << endl;
+  return;
 }
 int main() {
   cin >> t;
