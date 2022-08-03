@@ -7,19 +7,19 @@ using namespace std;
 const ll MAXN = 500010;
 const ll MAXM = 2000010;
 
-namespace TarjanVDCC {
+namespace TarjanVBCC {
   ll n, m;
   vector<ll> graph[MAXN];
   ll dfn[MAXN], low[MAXN], idx = 0;
   ll stk[MAXN], top = 0;
-  vector<ll> vdcc[MAXN];
-  ll vdcc_num = 0;
+  vector<ll> vbcc[MAXN];
+  ll vbcc_num = 0;
   void tarjan(ll u, ll fa) {
     dfn[u] = low[u] = ++idx;
     stk[++top] = u;
     ll child = 0;
     if (graph[u].size() == 0) {
-      vdcc[++vdcc_num].emplace_back(u);
+      vbcc[++vbcc_num].emplace_back(u);
       return;
     }
     for (auto v : graph[u]) {
@@ -28,11 +28,11 @@ namespace TarjanVDCC {
         tarjan(v, u);
         low[u] = min(low[u], low[v]);
         if (low[v] >= dfn[u]) {
-          ++vdcc_num;
+          ++vbcc_num;
           while (top && stk[top + 1] != v) {
-            vdcc[vdcc_num].emplace_back(stk[top--]);
+            vbcc[vbcc_num].emplace_back(stk[top--]);
           }
-          vdcc[vdcc_num].emplace_back(u);
+          vbcc[vbcc_num].emplace_back(u);
         }
       } else if (v != fa) {
         low[u] = min(low[u], dfn[v]);
@@ -57,10 +57,10 @@ namespace TarjanVDCC {
         tarjan(i, 0);
       }
     }
-    cout << vdcc_num << endl;
-    for (int i = 1; i <= vdcc_num; i++) {
-      cout << vdcc[i].size() << ' ';
-      for (auto u : vdcc[i]) {
+    cout << vbcc_num << endl;
+    for (int i = 1; i <= vbcc_num; i++) {
+      cout << vbcc[i].size() << ' ';
+      for (auto u : vbcc[i]) {
         cout << u << ' ';
       }
       cout << endl;
@@ -69,6 +69,6 @@ namespace TarjanVDCC {
 }
 int main() {
   ios::sync_with_stdio(false);
-  TarjanVDCC::run();
+  TarjanVBCC::run();
   return 0;
 }
