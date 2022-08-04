@@ -7,6 +7,7 @@ using namespace std;
 const ll MAXN = 500010;
 const ll MAXM = 2000010;
 
+// TODO: fix this
 namespace TarjanEBCC {
   ll n, m;
   vector<ll> graph[MAXN];

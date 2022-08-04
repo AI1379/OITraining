@@ -15,6 +15,7 @@ ll n, d, k;
 pair<ll, ll> mp[MAXN];
 ll dp[MAXN];
 ll idx[MAXD];
+// TODO: fix this
 void buildIdx(ll x) {
   ll curr = 0;
   for (int i = 1; i <= n; ++i) {
