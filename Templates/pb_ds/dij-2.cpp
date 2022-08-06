@@ -11,31 +11,65 @@ ll heap[MAXN], top = 0;
 bool cmp(ll lhs, ll rhs) {
   return dis[lhs] > dis[rhs];
 }
-void pushUp(ll pos) {
-  while (pos && dis[heap[pos / 2]] > dis[heap[pos]]) {
-    swap(heap[pos / 2], heap[pos]);
-    pos /= 2;
+
+void pushUp(ll x) {
+  while (x > 1) {
+    if (cmp(heap[x / 2], heap[x])) {
+      swap(heap[x / 2], heap[x]);
+      x /= 2;
+    } else {
+      break;
+    }
   }
 }
+
+void pushDown(ll x) {
+  ll s = x * 2;
+  while (s <= top) {
+    if (s <= top - 1 && cmp(heap[s], heap[s + 1])) {
+      ++s;
+    }
+    if (cmp(heap[x], heap[s])) {
+      swap(heap[x], heap[s]);
+      x = s;
+      s = x * 2;
+    } else {
+      break;
+    }
+  }
+}
+ll cnt = 0;
+bool vis[MAXN];
 void dijkstra() {
-  ll u;
+  ll u, v, d;
   for (int i = 1; i <= n; i++) {
     dis[i] = INF;
     heap[i] = i;
   }
   dis[s] = 0;
   top = n;
-  make_heap(heap + 1, heap + top + 1, cmp);
+  swap(heap[s], heap[1]);
   while (top > 0) {
     u = heap[1];
-    pop_heap(heap + 1, heap + top + 1, cmp);
+    swap(heap[1], heap[top]);
     --top;
-    for (auto &&[v, d] : graph[u]) {
+    pushDown(1);
+//    cnt = 0;
+//    ++cnt;
+//    if(graph[u].size()==0)--cnt;
+    for (pll obj : graph[u]) {
+//      if (!vis[u]) {
+        ++cnt;
+//        vis[u] = true;
+//      }
+      v = obj.first;
+      d = obj.second;
       if (dis[v] > dis[u] + d) {
         dis[v] = dis[u] + d;
         pushUp(v);
       }
     }
+//    cout << boolalpha << (cnt == graph[u].size()) << endl;
   }
 }
 int main() {
@@ -48,10 +82,19 @@ int main() {
     cin >> u >> v >> w;
     graph[u].push_back(make_pair(v, w));
   }
+  cnt = 0;
   dijkstra();
   for (int i = 1; i <= n; i++) {
     cout << dis[i] << ' ';
   }
   cout << endl;
+  cout << cnt << endl;
+  cnt = 0;
+  for (int i = 1; i <= n; i++) {
+    if (graph[i].size() != 0) {
+      ++cnt;
+    }
+  }
+  cout << cnt << endl;
   return 0;
 }

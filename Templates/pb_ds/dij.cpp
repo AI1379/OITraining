@@ -10,6 +10,7 @@ static ll dis[MAXN];
 vector<pll> graph[MAXN];
 __gnu_pbds::priority_queue<pll, greater<pll>> q;
 decltype(q)::point_iterator its[MAXN];
+ll heap[MAXN], top = 0;
 void dijkstra() {
   ll u;
   for (int i = 1; i <= n; i++) {
@@ -22,6 +23,7 @@ void dijkstra() {
   while (!q.empty()) {
     u = q.top().second;
     q.pop();
+    heap[++top] = u;
     for (auto &&[v, d] : graph[u]) {
       if (dis[v] > dis[u] + d) {
         dis[v] = dis[u] + d;
@@ -43,6 +45,10 @@ int main() {
   dijkstra();
   for (int i = 1; i <= n; i++) {
     cout << dis[i] << ' ';
+  }
+  cout << endl;
+  for (int i = 1; i <= n; i++) {
+    cout << heap[i] << ' ' << dis[heap[i]] << endl;
   }
   cout << endl;
   return 0;
