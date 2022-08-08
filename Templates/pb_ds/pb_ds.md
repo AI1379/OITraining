@@ -44,7 +44,7 @@
 
 ### 前置知识：如何自定义`priority_queue`的排序方式
 
-~~其实这个前置知识并不会影响pbds的使用~~
+~~其实这个前置知识并不会影响pbds堆的使用~~
 
 我们都知道，对于一个结构体，我们不能直接把它丢进`priority_queue`，无论是STL还是pbds。那么我们有两种方案：重载小于号，或者写一个**仿函数 functor**
 
@@ -112,7 +112,7 @@ class priority_queue;
 
 + `Alloc`是空间分配器，不用管他，省略即可 
 
-除了`pairing_heap_tag`以外，其他四个在OI中都不如`std::pirority_queue`。配对堆不仅优于STL的二叉堆，同时也优于`algorithm`头文件中的`make_heap`系列函数。
+除了`pairing_heap_tag`以外，其他四个在OI中都不如`std::pirority_queue`。配对堆不仅优于STL的二叉堆，同时也优于`algorithm`头文件中的`make_heap`系列函数。因此，如果不做说明，下文所指的pbds堆都指配对堆。
 
 五种tag都支持以下的操作：
 
@@ -142,3 +142,102 @@ class priority_queue;
 | `binomial_heap_tag`    | 最坏 $\Theta(\log(n))$ 均摊 $O(1)$      | $\Theta(\log(n))$                   | $\Theta(\log(n))$                                              | $\Theta(\log(n))$                   | $\Theta(\log(n))$ |
 | `rc_binomial_heap_tag` | $O(1)$                              | $\Theta(\log(n))$                   | $\Theta(\log(n))$                                              | $\Theta(\log(n))$                   | $\Theta(\log(n))$ |
 | `thin_heap_tag`        | $O(1)$                              | 最坏 $\Theta(n)$ 均摊 $\Theta(\log(n))$ | 最坏 $\Theta(\log(n))$ 均摊 $O(1)$或者$\Theta(\log n)$ 这取决于修改是增加还是减少 | 最坏 $\Theta(n)$ 均摊 $\Theta(\log(n))$ | $\Theta(n)$       |
+
+### 应用
+
+#### Dijkstra & Prim
+
+![SPFA](D:\Projects\OITraining\Templates\pb_ds\SPFA.jpg)
+
+OI中堆最常见的应用之一就是图论里最短路和最小生成树。
+
+我们知道，对于非负权图的最短路，有两大经典算法：Dijkstra和~~已死的~~SPFA。其中，`std::priority_queue`优化的Dijkstra复杂度是$\Theta(m\log m)$的，而手搓堆和线段树则是$\Theta(m\log n)$，对于Fibonacci堆则是吓人的$\Theta(m+n\log n)$。对于很稠密的图来说，我们有$m=O(n^2)$，此时dijkstra的常数会涨得飞快，而在考场上手搓Fib堆又并不现实，因此我们需要一种简单的方式对dijkstra进一步提速。
+
+同样，面对最小生成树，我们也有一样的问题：Kruskal在稠密图上的表现不尽人意，而单独`std::priority_queue`优化的Prim算法复杂度和Kruskal相同，常数还更大，因此面对稠密图我们需要更快的最小生成树算法，典型例子就是[Moo Network G](https://www.luogu.com.cn/problem/P8191)。
+
+>  **WARINING: 事实上，如果pbds堆优化dij是标算的一部分，那么它不应该给出`std::priority_queue`不能通过的测试点。因此，pbds堆优化更多可以看作是一种骗分方式。**
+
+> GCC认为`thin_heap_tag`在Dijkstra上表现会优于`pairing_heap_tag`，并且单从复杂度分析它也确实更优（等同于Fib堆），但是由于常数比较大，实测下来它的性能并没有配对堆优秀。
+
+那么为什么pbds堆会比STL堆跑的快呢？究其原因有两点：
+
+1. pbds堆支持`modify`操作
+
+2. pbds堆`modify`操作时，如果堆中元素是减少的，那么复杂度是$o(\log n)$的（注意这里不是上确界）。事实上配对堆的`modify`复杂度在学术界还无法给出精确解~~（就连Tarjan老爷子都没算出来）~~。目前认为的下界是$\Omega(\log\log n)$，上界是$O(2^{\sqrt{\log\log n}})$。
+
+事实上，Fib堆跑dijkstra和prim快的原因也在于此：Fib堆中元素减小时修改的复杂度是$\Theta(1)$的，这也是为什么`thin_heap_tag`有更优的理论复杂度。而dijkstra和prim中，每次松弛后，dis显然是减小的。
+
+代码:
+
+```cpp
+#include <bits/stdc++.h>
+#include <bits/extc++.h>
+using namespace std;
+#define ll long long
+#define pll pair<ll,ll>
+constexpr const ll MAXN = 100010;
+constexpr const ll INF = 1ll << (sizeof(ll) * 8 - 2);
+static ll n, m, s;
+static ll dis[MAXN];
+vector<pll> graph[MAXN];
+__gnu_pbds::priority_queue<pll, greater<pll>> q;
+decltype(q)::point_iterator its[MAXN];
+void dijkstra() {
+  ll u, v, d;
+  for (int i = 1; i <= n; i++) {
+    dis[i] = INF;
+  }
+  dis[s] = 0;
+  for (int i = 1; i <= n; i++) {
+    its[i] = q.push(make_pair(dis[i], i));
+  }
+  while (!q.empty()) {
+    u = q.top().second;
+    q.pop();
+    for (pll obj : graph[u]) {
+      v = obj.first;
+      d = obj.second;
+      if (dis[v] > dis[u] + d) {
+        dis[v] = dis[u] + d;
+        q.modify(its[v], make_pair(dis[u] + d, v));
+      }
+    }
+  }
+}
+int main() {
+  ll u, v, w;
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cout.tie(nullptr);
+  cin >> n >> m >> s;
+  for (int i = 1; i <= m; i++) {
+    cin >> u >> v >> w;
+    graph[u].push_back(make_pair(v, w));
+  }
+  dijkstra();
+  for (int i = 1; i <= n; i++) {
+    cout << dis[i] << ' ';
+  }
+  cout << endl;
+  return 0;
+}
+```
+
+#### 可并堆
+
+相比起优化dijkstra和prim，pbds堆在这一方面应用更广——毕竟STL中并没有数据结构能直接实现可并堆，而配对堆和左偏树都不是很好写。
+
+[【模板】左偏树（可并堆）](https://www.luogu.com.cn/problem/P3377)
+
+可并堆可以解决很多类型的问题，比如某些树上问题。这些题目一般是一个节点维护一个堆，然后儿子的堆不断向父亲合并，过程中进行计算。这些题虽然常常有省选及以上的难度，但主要原因在于可并堆并不好实现。另外，可并堆通常会与并查集一块出现（比如上面的模板题）
+
+### 例题
+
+- [P2713 罗马游戏](https://www.luogu.com.cn/problem/P2713)
+- [P1456 Monkey King](https://www.luogu.com.cn/problem/P1456)
+- [P1552 [APIO2012]派遣](https://www.luogu.com.cn/problem/P1552)
+- [P3261 [JLOI2015]城池攻占](https://www.luogu.com.cn/problem/P3261)
+- [P3273 [SCOI2011]棘手的操作](https://www.luogu.com.cn/problem/P3273)
+- [P4331 [BOI2004]Sequence](https://www.luogu.com.cn/problem/P4331)
+
+# 
