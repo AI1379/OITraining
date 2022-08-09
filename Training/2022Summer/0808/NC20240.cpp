@@ -1,4 +1,5 @@
 // https://ac.nowcoder.com/acm/problem/20240
+// https://www.luogu.com.cn/problem/P1896
 #include <iostream>
 #include <bitset>
 using namespace std;
