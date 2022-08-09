@@ -8,6 +8,8 @@
 
 `pb_ds`的主体部分在`__gnu_pb_ds`命名空间下，使用前需要`using namespace __gnu_pbds`
 
+> WARNING: NOIP评测的时候可能不允许使用`using namespace __gnu_pbds`。
+
 头文件如下：
 
 ```cpp
@@ -32,11 +34,17 @@
 
 它封装了可并堆，字典树，平衡树等一堆常用且难搞的东西，极大程度减少码量，甚至可能可以降低时间复杂度。
 
+而且，就算不敢在正经的提交文件中使用pbds，我们也可以用它来进行对拍。
+
 ## hash 哈希表
 
 ## trie 字典树
 
 ## tree 平衡树
+
+平衡树的实现有三个：`rb_tree_tag`，`splay_tree_tag`和`ov_tree_tag`。**除了红黑树都不建议使用，除非是一道Splay维护区间的问题而又不会写Splay。**
+
+
 
 ## priority_queue 堆
 
@@ -155,7 +163,7 @@ OI中堆最常见的应用之一就是图论里最短路和最小生成树。
 
 同样，面对最小生成树，我们也有一样的问题：Kruskal在稠密图上的表现不尽人意，而单独`std::priority_queue`优化的Prim算法复杂度和Kruskal相同，常数还更大，因此面对稠密图我们需要更快的最小生成树算法，典型例子就是[Moo Network G](https://www.luogu.com.cn/problem/P8191)。
 
->  **WARINING: 事实上，如果pbds堆优化dij是标算的一部分，那么它不应该给出`std::priority_queue`不能通过的测试点。因此，pbds堆优化更多可以看作是一种骗分方式。**
+>  **WARINING: 事实上，如果pbds堆优化dij是标算的一部分，那么它不应该给出`std::priority_queue`不能通过的测试点。因此，pbds堆优化更多可以看作是一种从标算不是最短路但是可以用最短路解的问题中骗分的方式。**
 
 > GCC认为`thin_heap_tag`在Dijkstra上表现会优于`pairing_heap_tag`，并且单从复杂度分析它也确实更优（等同于Fib堆），但是由于常数比较大，实测下来它的性能并没有配对堆优秀。
 
@@ -166,6 +174,8 @@ OI中堆最常见的应用之一就是图论里最短路和最小生成树。
 2. pbds堆`modify`操作时，如果堆中元素是减少的，那么复杂度是$o(\log n)$的（注意这里不是上确界）。事实上配对堆的`modify`复杂度在学术界还无法给出精确解~~（就连Tarjan老爷子都没算出来）~~。目前认为的下界是$\Omega(\log\log n)$，上界是$O(2^{\sqrt{\log\log n}})$。
 
 事实上，Fib堆跑dijkstra和prim快的原因也在于此：Fib堆中元素减小时修改的复杂度是$\Theta(1)$的，这也是为什么`thin_heap_tag`有更优的理论复杂度。而dijkstra和prim中，每次松弛后，dis显然是减小的。
+
+> 有一个很奇怪的事情，pbds的dij在luogu P4779里比stl堆快得多，但是我本机benchmark测无论是随机图还是网格套菊花两者速度都不相上下，开O2后STL堆甚至远远快过了手打堆和线段树。个人猜测是由于配对堆常数较大以及pbds堆实现时内存不连续导致的
 
 代码:
 
@@ -226,6 +236,8 @@ int main() {
 #### 可并堆
 
 相比起优化dijkstra和prim，pbds堆在这一方面应用更广——毕竟STL中并没有数据结构能直接实现可并堆，而配对堆和左偏树都不是很好写。
+
+**注意：`a.join(b)`后，`b`这个堆中的元素将会被清空。**
 
 [【模板】左偏树（可并堆）](https://www.luogu.com.cn/problem/P3377)
 
