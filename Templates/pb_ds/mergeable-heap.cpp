@@ -1,16 +1,15 @@
 #include <bits/stdc++.h>
-#include <bits/extc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/priority_queue.hpp>
 using namespace std;
 #define ll long long
-#define pll pair<ll,ll>
+#define pll pair<ll, ll>
 const ll MAXN = 100010;
 ll n, m;
 ll fa[MAXN];
 bool deleted[MAXN];
 __gnu_pbds::priority_queue<pll, greater<pll>> heaps[MAXN];
-ll find(ll x) {
-  return fa[x] == x ? x : fa[x] = find(fa[x]);
-}
+ll find(ll x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
 int main() {
   ll opt, x, y, fax, fay;
   pll obj;

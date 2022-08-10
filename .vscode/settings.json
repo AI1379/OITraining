@@ -76,7 +76,8 @@
         "bit": "cpp",
         "variant": "cpp",
         "rope": "cpp",
-        "slist": "cpp"
+        "slist": "cpp",
+        ".clangd": "yaml"
     },
     "git.ignoreLimitWarning": true,
     "files.defaultLanguage": "cpp", // ctrl+N新建文件后默认的语言
