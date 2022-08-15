@@ -2,7 +2,6 @@
 #include <cstring>
 #include <iostream>
 
-// TODO: fix this
 using namespace std;
 #define ll long long
 const ll MAXN = 10010;
@@ -15,29 +14,32 @@ struct SegtNode {
 ll t;
 ll n, w, h;
 ll l[MAXN];
-SegtNode segt[MAXN * 4];
+SegtNode segt[MAXN * 8];
 ScanLine stars[MAXN * 2];
 ll tmp[MAXN * 2];
+void pushUp(ll curr) {
+  segt[curr].val = max(segt[curr * 2].val, segt[curr * 2 + 1].val);
+}
 void buildSegt(ll curr, ll l, ll r) {
-  if (l == r) {
-    return;
-  }
   segt[curr].beg = l;
   segt[curr].end = r;
   segt[curr].tag = 0;
   segt[curr].val = 0;
+  if (l == r) {
+    return;
+  }
   buildSegt(curr * 2, l, (l + r) / 2);
   buildSegt(curr * 2 + 1, (l + r) / 2 + 1, r);
-}
-void pushUp(ll curr) {
-  segt[curr].val = max(segt[curr * 2].val, segt[curr * 2 + 1].val);
+  pushUp(curr);
 }
 void pushDown(ll curr) {
-  segt[curr * 2].val += segt[curr].tag;
-  segt[curr * 2 + 1].val += segt[curr].tag;
-  segt[curr * 2].tag += segt[curr].tag;
-  segt[curr * 2 + 1].tag += segt[curr].tag;
-  segt[curr].tag = 0;
+  if (segt[curr].tag) {
+    segt[curr * 2].val += segt[curr].tag;
+    segt[curr * 2 + 1].val += segt[curr].tag;
+    segt[curr * 2].tag += segt[curr].tag;
+    segt[curr * 2 + 1].tag += segt[curr].tag;
+    segt[curr].tag = 0;
+  }
 }
 void modify(ll curr, ll l, ll r, ll delta) {
   if (l <= segt[curr].beg && segt[curr].end <= r) {
@@ -50,7 +52,7 @@ void modify(ll curr, ll l, ll r, ll delta) {
   if (l <= mid) {
     modify(curr * 2, l, r, delta);
   }
-  if (mid < r) {
+  if (mid + 1 <= r) {
     modify(curr * 2 + 1, l, r, delta);
   }
   pushUp(curr);
@@ -68,8 +70,8 @@ void solve() {
     tmp[i] = y;
     tmp[i + n] = y + h - 1;
   }
-  sort(tmp + 1, tmp + n + 1);
-  sort(stars + 1, stars + n + 1,
+  sort(tmp + 1, tmp + 2 * n + 1);
+  sort(stars + 1, stars + 2 * n + 1,
        [](const ScanLine &lhs, const ScanLine &rhs) -> bool {
          if (lhs.pos == rhs.pos)
            return lhs.val > rhs.val;
@@ -93,5 +95,8 @@ int main() {
   while (t--) {
     solve();
   }
+#ifdef VSCODE
+  system("pause");
+#endif
   return 0;
 }
