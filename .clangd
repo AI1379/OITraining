@@ -9,5 +9,7 @@ CompileFlags:
       "-IC:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/12.1.0/include-fixed",
       "-Wall",
       "-Wextra",
+      "-DDEBUG",
+      "-DVSCODE",
     ]
   Compiler: gcc

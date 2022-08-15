@@ -1,78 +1,137 @@
 #include <algorithm>
 #include <iostream>
-// TODO: Splay
+#include <type_traits>
+
 using namespace std;
 #define ll long long
 #define pll pair<ll, ll>
 const ll MAXN = 100010;
 const ll INF = 1ll << (sizeof(ll) * 8 - 2);
-struct Node {
-  Node *fa, *son[2];
-  ll val, size;
-  bool tag;
-};
 static ll n, m;
 static ll val[MAXN];
-static Node splay_tree[MAXN];
-static Node *root;
-static ll tot = 0;
-static ll l, r;
-Node *buildSplay(ll l, ll r, Node *fa) {
-  if (l > r)
-    return 0;
+namespace Splay {
+static ll root, tot, nil;
+static ll child[MAXN][2];
+static ll parent[MAXN];
+static ll data[MAXN];
+static ll sub_size[MAXN];
+static bool tag[MAXN];
+} // namespace Splay
+bool which(ll x) { return x == Splay::child[Splay::parent[x]][1]; }
+ll buildSplay(ll l, ll r, ll pa) {
+  using namespace Splay;
+  if (l > r) {
+    return nil;
+  }
   ll mid = (l + r) / 2, cur = ++tot;
-  splay_tree[cur].fa = fa;
-  splay_tree[cur].val = val[mid];
-  splay_tree[cur].son[0] = buildSplay(l, mid - 1, &splay_tree[cur]);
-  splay_tree[cur].son[1] = buildSplay(mid + 1, r, &splay_tree[cur]);
-  splay_tree[cur].size =
-      (splay_tree[cur].son[0]->size) + (splay_tree[cur].son[1]->size);
-  splay_tree[cur].tag = false;
-  return &splay_tree[cur];
+  parent[cur] = pa;
+  Splay::data[cur] = val[mid];
+  child[cur][0] = buildSplay(l, mid - 1, cur);
+  child[cur][1] = buildSplay(mid + 1, r, cur);
+  sub_size[cur] = sub_size[child[cur][0]] + sub_size[child[cur][1]] + 1;
+  return cur;
 }
-void rotate(Node *node) {
-  Node *fa = node->fa, *gfa = fa->fa;
-  bool tp = (node == fa->son[1]);
-  fa->son[tp] = node->son[tp ^ 1];
-  if (node->son[tp ^ 1] != nullptr) {
-    node->son[tp ^ 1]->fa = fa;
-  }
-  node->son[tp ^ 1] = fa;
-  fa->fa = node;
-  node->fa = gfa;
-  if (gfa != nullptr) {
-    gfa->son[fa == gfa->son[1]] = node;
-  }
-  fa->size = fa->son[0]->size + fa->son[1]->size;
-  node->size = node->son[0]->size + node->son[1]->size;
-  return;
+void rotate(ll cur) {
+  using namespace Splay;
+  ll p = parent[cur], gp = parent[p];
+  bool chkc = which(cur), chkp = which(p);
+  child[p][chkc] = child[cur][chkc ^ 1];
+  if (child[cur][chkc ^ 1])
+    parent[child[cur][chkc ^ 1]] = p;
+  child[cur][chkc ^ 1] = p;
+  parent[p] = cur;
+  parent[cur] = gp;
+  if (gp)
+    child[gp][chkp] = cur;
+  sub_size[cur] = sub_size[child[cur][0]] + sub_size[child[cur][1]] + 1;
+  sub_size[p] = sub_size[child[p][0]] + sub_size[child[p][1]] + 1;
 }
-void splay(Node *node, Node *des_fa) {
-  for (Node *f = node->fa; f = node->fa, f != nullptr && f != des_fa;
-       rotate(node)) {
-    if (f->fa != nullptr) {
-      rotate(((node == node->fa->son[1]) ^ (f == f->fa->son[1])) ? f : node);
+void splay(ll cur, ll des_fa) {
+  using namespace Splay;
+  for (ll p = parent[cur]; p && p != des_fa; p = parent[cur]) {
+    if (parent[p] != des_fa)
+      rotate(which(cur) ^ which(p) ? cur : p);
+    rotate(cur);
+  }
+  if (des_fa == nil)
+    root = cur;
+}
+void pushdown(ll cur) {
+  using namespace Splay;
+  if (tag[cur]) {
+    tag[child[cur][0]] ^= 1;
+    tag[child[cur][1]] ^= 1;
+    swap(child[cur][0], child[cur][1]);
+    tag[cur] = 0;
+  }
+}
+ll findByOrder(ll ord) {
+  using namespace Splay;
+  ll cur = root;
+  while (true) {
+    pushdown(cur);
+    if (ord <= sub_size[child[cur][0]]) {
+      cur = child[cur][0];
+    } else {
+      ord -= (sub_size[child[cur][0]] + 1);
+      if (ord == 0)
+        return cur;
+      cur = child[cur][1];
     }
   }
-  if (des_fa == nullptr) {
-    root = node;
-  }
-  return;
+}
+void dfs(ll cur) {
+  pushdown(cur);
+  if (Splay::child[cur][0])
+    dfs(Splay::child[cur][0]);
+  if (abs(Splay::data[cur]) != INF)
+    cout << Splay::data[cur] << ' ';
+  if (Splay::child[cur][1])
+    dfs(Splay::child[cur][1]);
+}
+void dfs2(ll cur) {
+  // if (abs(Splay::data[cur]) != INF)
+  cout << Splay::data[cur] << ' ';
+  if (Splay::child[cur][0])
+    dfs(Splay::child[cur][0]);
+  if (Splay::child[cur][1])
+    dfs(Splay::child[cur][1]);
+}
+void print() {
+  using Splay::root;
+  // cout << Splay::data[root] << endl;
+  // dfs(root);
+  // cout << endl;
+  // dfs2(root);
+  // cout << endl << "===========" << endl;
+}
+void reverse(ll l, ll r) {
+  using namespace Splay;
+  ll lptr = findByOrder(l - 1), rptr = findByOrder(r + 1);
+  // cout << Splay::data[lptr] << ' ' << Splay::data[rptr] << endl;
+  print();
+  splay(lptr, nil);
+  print();
+  splay(rptr, lptr);
+  print();
+  tag[child[child[root][1]][0]] ^= 1;
 }
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-  cout.tie(nullptr);
+  ll l, r;
   cin >> n >> m;
   val[1] = -INF;
   val[n + 2] = INF;
   for (int i = 1; i <= n; i++) {
     val[i + 1] = i;
   }
-  root = buildSplay(1, n + 2, nullptr);
+  Splay::nil = 0;
+  Splay::root = buildSplay(1, n + 2, Splay::nil);
+  print();
   while (m--) {
     cin >> l >> r;
+    reverse(l + 1, r + 1);
   }
+  dfs(Splay::root);
 #ifdef VSCODE
   system("pause");
 #endif
