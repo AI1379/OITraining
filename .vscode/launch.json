@@ -12,17 +12,17 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "(gdb) 启动",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.o",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": true,
+            // "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\Qt\\Tools\\mingw900_64\\bin\\gdb.exe",
+            "preLaunchTask": "build",
             "setupCommands": [
                 {
                     "description": "为 gdb 启用整齐打印",
@@ -30,7 +30,6 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Windows build"
         }
     ]
 }

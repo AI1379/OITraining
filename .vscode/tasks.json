@@ -2,19 +2,18 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Windows build",
-            "command": "gcc.exe",
+            "label": "build",
+            "command": "gcc",
             "args": [
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "${fileDirname}/${fileBasenameNoExtension}.o",
                 "-O2",
                 "-std=c++20",
                 "-Wall",
                 "-Wextra",
                 "-DDEBUG",
-                "-DVSCODE",
                 "-fno-ms-extensions",
                 "-lstdc++",
                 "-lm"

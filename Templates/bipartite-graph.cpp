@@ -1,13 +1,13 @@
-#include <iostream>
 #include <algorithm>
-#include <vector>
 #include <cstring>
+#include <iostream>
+#include <vector>
 using namespace std;
 #define ll long long
 const ll MAXN = 510;
 const ll MAXM = 510;
 ll n, m, e;
-vector<ll>graph[MAXN];
+vector<ll> graph[MAXN];
 ll ans = 0;
 bool vis[MAXM];
 ll match[MAXM];

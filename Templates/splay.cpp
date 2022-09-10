@@ -80,40 +80,11 @@ ll findByOrder(ll ord) {
     }
   }
 }
-void dfs(ll cur) {
-  pushdown(cur);
-  if (Splay::child[cur][0])
-    dfs(Splay::child[cur][0]);
-  if (abs(Splay::data[cur]) != INF)
-    cout << Splay::data[cur] << ' ';
-  if (Splay::child[cur][1])
-    dfs(Splay::child[cur][1]);
-}
-void dfs2(ll cur) {
-  // if (abs(Splay::data[cur]) != INF)
-  cout << Splay::data[cur] << ' ';
-  if (Splay::child[cur][0])
-    dfs(Splay::child[cur][0]);
-  if (Splay::child[cur][1])
-    dfs(Splay::child[cur][1]);
-}
-void print() {
-  using Splay::root;
-  // cout << Splay::data[root] << endl;
-  // dfs(root);
-  // cout << endl;
-  // dfs2(root);
-  // cout << endl << "===========" << endl;
-}
 void reverse(ll l, ll r) {
   using namespace Splay;
   ll lptr = findByOrder(l - 1), rptr = findByOrder(r + 1);
-  // cout << Splay::data[lptr] << ' ' << Splay::data[rptr] << endl;
-  print();
   splay(lptr, nil);
-  print();
   splay(rptr, lptr);
-  print();
   tag[child[child[root][1]][0]] ^= 1;
 }
 int main() {
@@ -126,14 +97,9 @@ int main() {
   }
   Splay::nil = 0;
   Splay::root = buildSplay(1, n + 2, Splay::nil);
-  print();
   while (m--) {
     cin >> l >> r;
     reverse(l + 1, r + 1);
   }
-  dfs(Splay::root);
-#ifdef VSCODE
-  system("pause");
-#endif
   return 0;
 }

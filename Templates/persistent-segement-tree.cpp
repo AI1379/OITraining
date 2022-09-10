@@ -27,7 +27,6 @@ ll build(ll l, ll r) {
   return pos;
 }
 ll query(ll p, ll cur) {
-  // cout << segt[cur].l << ' ' << segt[cur].r << endl;
   if (segt[cur].l == p && segt[cur].r == p) {
     return segt[cur].val;
   }
@@ -39,9 +38,6 @@ ll query(ll p, ll cur) {
   }
 }
 void modify(ll p, ll val, ll pre, ll cur) {
-  // cout << segt[pre].l << ' ' << segt[pre].r << endl;
-  // cout << segt[cur].l << ' ' << segt[cur].r << endl;
-  // cout << endl;
   segt[cur].l = segt[pre].l;
   segt[cur].r = segt[pre].r;
   if (segt[cur].l == p && segt[cur].r == p) {
