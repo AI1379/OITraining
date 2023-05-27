@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>&#x4e94;&#x4e00;&#x6b22;&#x4e50;&#x8d5b; &#x9898;&#x89e3;</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension ms-toolsai.jupyter */
+/* These classnames are inherited from bootstrap, but are present in most notebook renderers */
+
+.alert {
+    width: auto;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.alert > *:last-child {
+    margin-bottom: 0;
+}
+#preview > .alert:last-child {
+    /* Prevent this being set to zero by the default notebook stylesheet */
+    padding-bottom: 1em;
+}
+
+.alert-success {
+    /* Note there is no suitable color available, so we just copy "info" */
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-info {
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-warning {
+    background-color: var(--theme-warning-background);
+    color: var(--theme-warning-foreground);
+}
+.alert-danger {
+    background-color: var(--theme-error-background);
+    color: var(--theme-error-foreground);
+}
+
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="五一欢乐赛-题解">五一欢乐赛 题解</h1>
+<h2 id="t1">T1</h2>
+<blockquote>
+<p><a href="https://codeforces.com/gym/104090/problem/F">ICPC 2022 亚洲区域赛 杭州站 F题</a></p>
+<p><s>当然还是略有改动的</s></p>
+</blockquote>
+<p><code>find</code> 或者 <code>in</code> 即可。</p>
+<p>注意忽略大小写。</p>
+<pre><code class="language-python">n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+ans = []
+flag = <span class="hljs-literal">False</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    m = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+    flag = <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(m):
+        s = <span class="hljs-built_in">input</span>()
+        <span class="hljs-keyword">if</span> s.lower().find(<span class="hljs-string">&quot;liyue&quot;</span>) != -<span class="hljs-number">1</span>:
+            ans.append(s)
+            flag = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> flag:
+        ans.append(<span class="hljs-string">&quot;Time to play Genius Invokation TCG!&quot;</span>)
+<span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> ans:
+    <span class="hljs-built_in">print</span>(s)
+</code></pre>
+<h2 id="t2">T2</h2>
+<p>这个东西在密码学里其实很有名，叫CBC模式。不过真正的CBC模式中间还会有一层加密流程，这里把它省略掉了。这里的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">e_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 在密码学中被称作初始化向量（IV），有些地方也叫Salt（就是盐）。</p>
+<p>当然，CBC模式的加密因为不利于并行计算而且安全性较低，现在在工业上已经被淘汰了。</p>
+<p><s>但是再怎么说也比凯撒之类的安全得多罢。</s></p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">decode</span>(<span class="hljs-params">d: <span class="hljs-built_in">int</span>, cipher: <span class="hljs-built_in">str</span></span>):
+    plain = <span class="hljs-string">&quot;&quot;</span>
+    tmp = d
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(cipher), <span class="hljs-number">2</span>):
+        plain += <span class="hljs-built_in">chr</span>(<span class="hljs-built_in">int</span>(cipher[i:i+<span class="hljs-number">2</span>], <span class="hljs-number">16</span>) ^ tmp)
+        tmp = <span class="hljs-built_in">int</span>(cipher[i:i+<span class="hljs-number">2</span>], <span class="hljs-number">16</span>)
+    <span class="hljs-keyword">return</span> plain
+
+<span class="hljs-built_in">print</span>(decode(<span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>()), <span class="hljs-built_in">input</span>()))
+</code></pre>
+<h2 id="t3">T3</h2>
+<p>贪心。</p>
+<p>要使消耗体力最大，显然是从当前能跳的最高的跳到最低的。排序然后扫一遍即可。</p>
+<pre><code class="language-python">n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+h = [<span class="hljs-number">0</span>] + <span class="hljs-built_in">sorted</span>([<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()])
+p, q = n, <span class="hljs-number">0</span>
+ans = <span class="hljs-number">0</span>
+<span class="hljs-keyword">while</span> q &lt; p:
+    ans += (h[q]-h[p])**<span class="hljs-number">2</span>
+    q += <span class="hljs-number">1</span>
+    ans += (h[q]-h[p])**<span class="hljs-number">2</span>
+    p -= <span class="hljs-number">1</span>
+
+<span class="hljs-built_in">print</span>(ans)
+</code></pre>
+<h2 id="t4">T4</h2>
+<p>在树上双指针深搜即可。</p>
+<p>我们定义一个函数 <code>dfs(u,v)</code> 表示判断<strong>以 <code>u</code> 为根的子树 翻转后是否与以 <code>v</code> 为根的子树相同</strong>， 于是最终要做的就是求 <code>dfs(root,root)</code>。</p>
+<p>然后就是怎么写的问题。深搜的基本思想就是递归，就是<strong>处理好自己，然后用一样的方式处理自己的孩子</strong>。那么我们也分两部分考虑。</p>
+<p>对于 <code>u v</code> 两个点，只要两点的权值相等即可。</p>
+<p>然后就是处理孩子们。我们发现， <code>dfs(u,v)</code> 如果为真，说明 <code>u</code> 的左儿子与 <code>v</code> 的右儿子翻转后相同，并且 <code>u</code> 的右儿子与 <code>v</code> 的左儿子翻转后相同。</p>
+<p>那么我们只要在 <code>dfs</code> 里判断这三个条件即可。</p>
+<p>接下来还有一个递归出口的问题。容易发现，如果 <code>u == v == 0</code> 则一定成立，因此把这个作为递归出口即可。</p>
+<pre><code class="language-python">tr = [(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)]
+n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+fa = [<span class="hljs-number">0</span>]*(n+<span class="hljs-number">1</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    tr.append(<span class="hljs-built_in">tuple</span>([<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]))
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, n+<span class="hljs-number">1</span>):
+    fa[tr[i][<span class="hljs-number">0</span>]] = i
+    fa[tr[i][<span class="hljs-number">1</span>]] = i
+
+rt = <span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, n+<span class="hljs-number">1</span>):
+    <span class="hljs-keyword">if</span> fa[i] == <span class="hljs-number">0</span>:
+        rt = i
+        <span class="hljs-keyword">break</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">dfs</span>(<span class="hljs-params">p: <span class="hljs-built_in">int</span>, q: <span class="hljs-built_in">int</span></span>):
+    <span class="hljs-keyword">if</span> p == <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> q == <span class="hljs-number">0</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">return</span> tr[p][<span class="hljs-number">2</span>] == tr[q][<span class="hljs-number">2</span>] <span class="hljs-keyword">and</span> dfs(tr[p][<span class="hljs-number">0</span>], tr[q][<span class="hljs-number">1</span>]) <span class="hljs-keyword">and</span> dfs(tr[p][<span class="hljs-number">1</span>], tr[q][<span class="hljs-number">0</span>])
+
+
+<span class="hljs-keyword">if</span> dfs(rt, rt):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;YES&quot;</span>)
+<span class="hljs-keyword">else</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;NO&quot;</span>)
+</code></pre>
+<h3 id="update">update</h3>
+<p>后来发现还有一个做法</p>
+<p>众所周知，通过先序遍历和中序遍历可以确定一颗二叉树。</p>
+<p>那么只要把原树的先序和中序求出来，然后交换左右儿子，再求一边先序和中序，比较是否相同即可。</p>
+<p>（代码略）</p>
+<h2 id="t5">T5</h2>
+<p><a href="https://www.luogu.com.cn/problem/P2678">「NOIP 2015 提高组」 跳石头</a></p>
+<p>带了一点点贪心的二分答案。</p>
+<p>求最小值最大之类的问题，我们首先应当想到的就是二分答案。二分答案，基本的思想就是，<strong>把最值问题变成判定问题</strong>。</p>
+<p>以这个题为例。本题枚举显然是不行的，所以考虑二分。由于 <code>n</code> 块石头的位置是确定的，所以可能的答案是在一个有限的区间里的，这种情况下就可以考虑二分。这个二分与二分查找不同，<strong>它不是在给定的序列上二分，而是在答案的区间里二分</strong>。</p>
+<p>二分首先得找单调性。我们容易发现，当最小值逐渐增大时，所需要的去掉的石头数量是在不断增加的。那么我们就考虑，<strong>二分最终的最小值，然后贪心求至少去掉的石头个数</strong>。于是，我们的问题就从求最小值的最大值，变成了<strong>判定一个最小值是否可行</strong>。</p>
+<p>然后就是在二分的同时考虑贪心。我们从前往后扫，同时开一个变量 <code>tmp</code> 记录当前的位置。当扫到 <code>i</code> 时，我们判断第 <code>i</code> 块与当前的距离是否小于 <code>mid</code>，如果小于，则与二分时的最小值为mid矛盾，于是就得把 <code>i</code> 去掉，然后记录去掉的石头总数。扫完一遍后，判断需要去掉的石头是否小于 <code>m</code> 即可。注意要扫到 <code>n+1</code>。</p>
+<p>代码</p>
+<pre><code class="language-python">n, m = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+val = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">check</span>(<span class="hljs-params">x: <span class="hljs-built_in">int</span></span>):
+    tmp = <span class="hljs-number">0</span>
+    p = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> val:
+        <span class="hljs-keyword">if</span> i-tmp &lt; x:
+            p += <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            tmp = i
+    <span class="hljs-keyword">return</span> p &lt;= m
+
+
+l = <span class="hljs-number">1</span>
+r = val[n]
+ans = <span class="hljs-number">0</span>
+<span class="hljs-keyword">while</span> l &lt;= r:
+    mid = (l+r)//<span class="hljs-number">2</span>
+    <span class="hljs-keyword">if</span> check(mid):
+        ans = mid
+        l = mid + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">else</span>:
+        r = mid - <span class="hljs-number">1</span>
+
+<span class="hljs-built_in">print</span>(ans)
+</code></pre>
+<h2 id="t6">T6</h2>
+<p><a href="https://www.luogu.com.cn/problem/P1020">「NOIP 1999 普及组」导弹拦截</a></p>
+<p>经典最长上升子序列（LIS）问题。</p>
+<p>首先，我们定义 <code>f[i]</code> 为<strong>第 <code>i</code> 位为结尾</strong>的LIS的长度。我们从前往后扫过来一位一位求 <code>f[i]</code> 的值，那么枚举的想法是显然的：对于第 <code>i</code> 位，因为前 <code>i-1</code> 位的对应值已经求好了，那么只要扫一遍前 <code>i-1</code> 位，先判断对应的 <code>v[j]</code> 是否小于 <code>v[i]</code> ，如果小于，就打擂求 <code>f[j]</code> 的最大值，这样 <code>f[i]</code> 就是 <code>f[j]</code> 的最大值再加一。</p>
+<p>但是这样的时间复杂度是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 的。</p>
+<p>这个时候我们考虑二分。定义 <code>d[i]</code> 为<strong>要达到 <code>i</code> 的长度，对应的 <code>v[i]</code> 至少要大于 <code>d[i]</code></strong>。显然，<code>d[i]</code> 是不下降的。那么我们要找的就是，<strong><code>d[i]</code> 中的最后一个最后一个小于 <code>v[i]</code> 的位置</strong>。注意，二分得到 <code>f[i]</code> 的时候，还得要进行更新</p>
+<blockquote>
+<p>关于 <code>d[i]</code> 不下降的证明：</p>
+<p>假设对于 <code>d[i]</code> ，存在 <code>j &gt; i</code> 并且 <code>d[j] &lt; d[i]</code>，</p>
+</blockquote>
+<pre><code class="language-python">n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+v = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+f = [<span class="hljs-number">0</span>]*n
+d = [<span class="hljs-number">0x3fffffff</span>]*(n+<span class="hljs-number">1</span>)
+d[<span class="hljs-number">1</span>] = <span class="hljs-number">0</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">find</span>(<span class="hljs-params">x: <span class="hljs-built_in">int</span></span>):
+    l = <span class="hljs-number">1</span>
+    r = n
+    ans = -<span class="hljs-number">1</span>
+    <span class="hljs-keyword">while</span> l &lt;= r:
+        mid = (l+r)//<span class="hljs-number">2</span>
+        <span class="hljs-keyword">if</span> d[mid] &lt; x:
+            ans = mid
+            l = mid+<span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            r = mid-<span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> ans
+
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    f[i] = find(v[i])
+    d[f[i]+<span class="hljs-number">1</span>] = v[i]
+
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">max</span>(f))
+
+</code></pre>
+
+        <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </body>
+    </html>

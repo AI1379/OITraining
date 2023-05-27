@@ -1,41 +1,41 @@
 // https://www.luogu.com.cn/problem/P3387
 
-#include <iostream>
 #include <algorithm>
-#include <vector>
-#include <queue>
 #include <cstring>
+#include <iostream>
+#include <queue>
+#include <vector>
 using namespace std;
 #define ll long long
 const ll MAXN = 10010;
 const ll MAXM = 100010;
 namespace TarjanSCC {
-  ll n, m;
-  ll val[MAXN];
-  vector<ll>graph[MAXN];
-  bool in_stk[MAXN];
-  ll dfn[MAXN], low[MAXN];
-  ll stk[MAXN], top = 0;
-  ll scc[MAXN];
-  ll idx = 0;
-  void init() {
-    memset(dfn, 0, sizeof(dfn));
-    memset(low, 0, sizeof(low));
-    memset(in_stk, 0, sizeof(in_stk));
-  }
-  void run();
-  void tarjan(ll u);
-  void makeDAG();
+ll n, m;
+ll val[MAXN];
+vector<ll> graph[MAXN];
+bool in_stk[MAXN];
+ll dfn[MAXN], low[MAXN];
+ll stk[MAXN], top = 0;
+ll scc[MAXN];
+ll idx = 0;
+void init() {
+  memset(dfn, 0, sizeof(dfn));
+  memset(low, 0, sizeof(low));
+  memset(in_stk, 0, sizeof(in_stk));
 }
+void run();
+void tarjan(ll u);
+void makeDAG();
+} // namespace TarjanSCC
 namespace DAG {
-  ll n = 0;
-  ll val[MAXN];
-  ll deg[MAXN];
-  ll dp[MAXN];
-  ll ans = 0;
-  vector<ll>graph[MAXN];
-  void run();
-}
+ll n = 0;
+ll val[MAXN];
+ll deg[MAXN];
+ll dp[MAXN];
+ll ans = 0;
+vector<ll> graph[MAXN];
+void run();
+} // namespace DAG
 
 void TarjanSCC::run() {
   ll u, v;

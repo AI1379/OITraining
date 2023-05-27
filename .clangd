@@ -11,5 +11,7 @@ CompileFlags:
       "-Wextra",
       "-DDEBUG",
       "-DVSCODE",
+      "-lstdc++",
+      "-lm"
     ]
-  Compiler: gcc
+  Compiler: clang

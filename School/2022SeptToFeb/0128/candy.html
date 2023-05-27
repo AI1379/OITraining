@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>candy</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension ms-toolsai.jupyter */
+/* These classnames are inherited from bootstrap, but are present in most notebook renderers */
+
+.alert {
+    width: auto;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.alert > *:last-child {
+    margin-bottom: 0;
+}
+#preview > .alert:last-child {
+    /* Prevent this being set to zero by the default notebook stylesheet */
+    padding-bottom: 1em;
+}
+
+.alert-success {
+    /* Note there is no suitable color available, so we just copy "info" */
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-info {
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-warning {
+    background-color: var(--theme-warning-background);
+    color: var(--theme-warning-foreground);
+}
+.alert-danger {
+    background-color: var(--theme-error-background);
+    color: var(--theme-error-foreground);
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="candy">candy</h1>
+<p>由于每个人都只考虑左边和右边，所以某一位上的变化对整体变化并不大，因此不会存在让某一位变大使总和变小的情况——也就是说这个题可以贪心。当然这个贪心是显而易见的：我们要使总和尽可能小，就意味着要使每一位都尽可能小</p>
+<p><s>显然这段话是废话</s></p>
+<p>然后我们就要考虑如何求每一位最小的可能的值了</p>
+<p>先从简单的情况开始，我们先来考虑什么样子的位最终的 <code>ans[i]</code> 能取到<code>1</code>。这样的位显而易见，有两种情况：</p>
+<ol>
+<li>左边和右边都比<code>ans[i]</code>大</li>
+<li>左边和右边都和<code>ans[i]</code>相等</li>
+</ol>
+<p>第一种情况，显然不会有什么会要求<code>ans[i]</code>大于某一个值；而第二种情况，左右两边都不关心第<code>i</code>位是多少，那么他可以是任何可能的值。</p>
+<p>然后我们考虑怎么填。</p>
+<p>填进去比较复杂。一个很自然的情况是从左往右扫然后只考虑前一位的影响，但是显然不行：因为最后一位会出现问题。</p>
+<p>那么我们考虑简化这个问题。我们考虑为什么刚才的做法不对：因为在那种做法里我们只考虑了一边的情况，而事实上我们应该考虑两边。但是考虑两边是很麻烦的，前前后后会有很多麻烦需要处理。所以我们考虑尝试着改变填入的顺序，使得我们可以合理的忽略一部分的约束。这种做法不难想到（<s>虽然我自己一开始也没想到</s>）：按照值的大小，从小到大填。</p>
+<p>为什么可以呢？我们先来回顾一下刚才是怎么确定哪几位是<code>1</code>的：看看这一位左右两边的数对这一位的影响。如果两边的数都大于等于它自己，那么这一位就可以是任意一个尽可能小的值，因为两边两位都不会要求这一位大于某个值。打个比方，样例中的<code>1 2 0</code>，<code>0</code>的两边分别是<code>1</code>和<code>2</code>，那么我就可以让<code>0</code>这一位填上<code>1</code>而不对别的位造成影响。</p>
+<p>那么我们只要从小到大排序记录位置就好了。</p>
+<p>当然并没有这么简单。我们还得要考虑左右两边相等的情况。如果两边都相等，显然我可以是；如果只有一边相等，那么就考虑不相等的那一边即可。这样的话，结论就呼之欲出了：</p>
+<pre><code class="language-cpp"><span class="hljs-function">def <span class="hljs-title">pos</span><span class="hljs-params">(i)</span>:
+    return (i % n+n) % n
+
+
+n =</span> <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+a = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x in <span class="hljs-built_in">input</span>().<span class="hljs-built_in">split</span>()]
+ans = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(n)]
+p = <span class="hljs-built_in">sorted</span>([(a[i], i) <span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(n)])
+
+<span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(n):
+    <span class="hljs-keyword">if</span> a[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]<span class="hljs-number">-1</span>)] == a[p[i][<span class="hljs-number">1</span>]] <span class="hljs-keyword">and</span> a[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]+<span class="hljs-number">1</span>)] == a[p[i][<span class="hljs-number">1</span>]]:
+        ans[p[i][<span class="hljs-number">1</span>]] = <span class="hljs-number">1</span>
+    elif a[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]<span class="hljs-number">-1</span>)] == a[p[i][<span class="hljs-number">1</span>]]:
+        ans[p[i][<span class="hljs-number">1</span>]] = ans[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]+<span class="hljs-number">1</span>)]+<span class="hljs-number">1</span>
+    elif a[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]+<span class="hljs-number">1</span>)] == a[p[i][<span class="hljs-number">1</span>]]:
+        ans[p[i][<span class="hljs-number">1</span>]] = ans[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]<span class="hljs-number">-1</span>)]+<span class="hljs-number">1</span>
+    <span class="hljs-keyword">else</span>:
+        ans[p[i][<span class="hljs-number">1</span>]] = <span class="hljs-built_in">max</span>(ans[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]<span class="hljs-number">-1</span>)], ans[<span class="hljs-built_in">pos</span>(p[i][<span class="hljs-number">1</span>]+<span class="hljs-number">1</span>)])+<span class="hljs-number">1</span>
+
+s = <span class="hljs-built_in">sum</span>(ans)
+<span class="hljs-built_in">print</span>(s)
+
+</code></pre>
+<p><s>以下是拓扑排序的半个伪做法</s></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> queue
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">pos</span>(<span class="hljs-params">i</span>):
+    <span class="hljs-comment"># 一个辅助函数 求第i个元素在环里面的位置</span>
+    <span class="hljs-comment"># 比如说第0位 前一位是n-1 第n-1位后一位是0</span>
+    <span class="hljs-comment"># 这样可以简化编码</span>
+    <span class="hljs-keyword">return</span> (i % n+n) % n
+
+
+n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+a = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+q = queue.Queue()
+
+<span class="hljs-comment"># ans记录最终每一个点上面的值</span>
+ans = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n)]
+<span class="hljs-comment"># vis记录有没有进过队列</span>
+vis = <span class="hljs-built_in">dict</span>.fromkeys(<span class="hljs-built_in">range</span>(n), <span class="hljs-literal">False</span>)
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    <span class="hljs-keyword">if</span> a[pos(i-<span class="hljs-number">1</span>)] &gt;= a[i] <span class="hljs-keyword">and</span> a[i] &lt;= a[pos(i+<span class="hljs-number">1</span>)]:
+        q.put(i)
+        ans[i] = <span class="hljs-number">1</span>
+
+<span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> q.empty():
+    p = q.get()
+    vis[p] = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">if</span> a[pos(p-<span class="hljs-number">1</span>)] &gt; a[p]:
+        <span class="hljs-keyword">if</span> a[pos(p-<span class="hljs-number">2</span>)] &gt;= a[pos(p-<span class="hljs-number">1</span>)] <span class="hljs-keyword">or</span> vis[pos(p-<span class="hljs-number">2</span>)]:
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> vis[pos(p-<span class="hljs-number">1</span>)]:
+                q.put(pos(p-<span class="hljs-number">1</span>))
+                ans[pos(p-<span class="hljs-number">1</span>)] = ans[p]+<span class="hljs-number">1</span>
+    <span class="hljs-keyword">if</span> a[pos(p+<span class="hljs-number">1</span>)] &gt; a[p]:
+        <span class="hljs-keyword">if</span> a[pos(p+<span class="hljs-number">2</span>)] &gt;= a[pos(p+<span class="hljs-number">1</span>)] <span class="hljs-keyword">or</span> vis[pos(p+<span class="hljs-number">2</span>)]:
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> vis[pos(p+<span class="hljs-number">1</span>)]:
+                q.put(pos(p+<span class="hljs-number">1</span>))
+                ans[pos(p+<span class="hljs-number">1</span>)] = ans[p]+<span class="hljs-number">1</span>
+
+s = <span class="hljs-built_in">sum</span>(ans)
+
+<span class="hljs-built_in">print</span>(s)
+
+</code></pre>
+
+        
+        
+    </body>
+    </html>

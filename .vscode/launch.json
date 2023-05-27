@@ -22,6 +22,7 @@
             "environment": [],
             // "externalConsole": true,
             "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
             "preLaunchTask": "build",
             "setupCommands": [
                 {
