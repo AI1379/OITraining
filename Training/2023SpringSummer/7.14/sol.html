@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>A</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="a">A</h1>
+<p>略</p>
+<h1 id="b">B</h1>
+<p>先判定回不回文再判定素数即可</p>
+<p>也可以筛法求素数之后判断回文</p>
+<p>关于为什么偶数位回文数只有11是素数：容易证明偶数位的回文数必然是11的倍数</p>
+<h1 id="c">C</h1>
+<p>这题本意是想二分</p>
+<p>先sort，从小往大扫，遇到每一个数<code>lis[i]</code>，二分两次，一次找<strong>第一个<code>lis[i]+c</code></strong>，一次找<strong>最后一个<code>lis[i]+c</code></strong>。或者说，一次找<strong>第一个大于等于<code>lis[i]+c</code>的</strong>，一次找<strong>第一个大于<code>lis[i]+c</code>的</strong>，然后做一个差加到答案上即可。</p>
+<p>代码：</p>
+<pre><code class="language-python">n, c = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+s = <span class="hljs-built_in">sorted</span>([<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()])
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">find1</span>(<span class="hljs-params">p, x</span>):
+    l = p + <span class="hljs-number">1</span>
+    r = <span class="hljs-built_in">len</span>(s) - <span class="hljs-number">1</span>
+    ans = <span class="hljs-built_in">len</span>(s)
+    <span class="hljs-keyword">while</span> l &lt;= r:
+        mid = (l + r) // <span class="hljs-number">2</span>
+        <span class="hljs-keyword">if</span> s[mid] &gt;= x:
+            ans = mid
+            r = mid - <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            l = mid + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> ans
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">find2</span>(<span class="hljs-params">p, x</span>):
+    l = p + <span class="hljs-number">1</span>
+    r = <span class="hljs-built_in">len</span>(s) - <span class="hljs-number">1</span>
+    ans = <span class="hljs-built_in">len</span>(s)
+    <span class="hljs-keyword">while</span> l &lt;= r:
+        mid = (l + r) // <span class="hljs-number">2</span>
+        <span class="hljs-keyword">if</span> s[mid] &gt; x:
+            ans = mid
+            r = mid - <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            l = mid + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> ans
+
+
+ans = <span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(s)):
+    ans += find2(i, s[i] + c) - find1(i, s[i] + c)
+
+<span class="hljs-built_in">print</span>(ans)
+</code></pre>
+<p>但是事实上有个更好的做法：</p>
+<p>开一个<code>1000000</code>的列表<code>t</code>，<code>t[i]</code>表示<code>i</code>这个数在<code>lis</code>中出现的次数，然后每次加上<code>t[lis[i]+c]</code>即可。</p>
+<pre><code class="language-python">n, c = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+lis = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+ans = <span class="hljs-number">0</span>
+t = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-number">1000010</span>]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    t[lis[i]] += <span class="hljs-number">1</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    ans += t[lis[i] + c]
+<span class="hljs-built_in">print</span>(ans)
+</code></pre>
+<h1 id="d">D</h1>
+<p><strong>真的不是贪心！！！</strong></p>
+<blockquote>
+<p>反例：<code>5 14 10 12 7</code></p>
+<p>如果贪心的话会认为一边<code>22</code>一边<code>26</code></p>
+<p>但是事实上<code>14</code>和<code>10</code>放在一起是一个更优的解</p>
+</blockquote>
+<p>所以这个题其实是要深搜。</p>
+<p>剩下的就是板子了</p>
+<pre><code class="language-python">s = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+a = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+b = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+c = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+d = [<span class="hljs-built_in">int</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">input</span>().split()]
+
+
+<span class="hljs-comment"># l表示当前左半边大小 r表示当前右半边大小</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">dfs</span>(<span class="hljs-params">lis, cur, l, r</span>):
+    <span class="hljs-comment"># 到头了 返回左右两边较大的</span>
+    <span class="hljs-keyword">if</span> cur == <span class="hljs-built_in">len</span>(lis):
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(l, r)
+    <span class="hljs-comment"># 否则 考虑当前这一个放在左边还是右边</span>
+    <span class="hljs-comment"># 左边就l+lis[cur] 右边就r+lis[cur]</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">min</span>(dfs(lis, cur + <span class="hljs-number">1</span>, l + lis[cur], r), dfs(lis, cur + <span class="hljs-number">1</span>, l, r + lis[cur]))
+
+
+r1, r2, r3, r4 = dfs(a, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), dfs(b, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), dfs(c, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), dfs(d, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+ans = r1 + r2 + r3 + r4
+<span class="hljs-built_in">print</span>(r1, r2, r3, r4)
+
+<span class="hljs-built_in">print</span>(ans)
+</code></pre>
+<h1 id="e">E</h1>
+<p>树上问题。依然深搜即可</p>
+<p>搜的时候记录每一个点的深度，然后记录每个深度的点数即可</p>
+<pre><code class="language-python">n = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>())
+tree = [[] <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n)]
+tot = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n)]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n - <span class="hljs-number">1</span>):
+    u, v = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+    tree[u - <span class="hljs-number">1</span>].append(v - <span class="hljs-number">1</span>)
+    tree[v - <span class="hljs-number">1</span>].append(u - <span class="hljs-number">1</span>)
+depth = <span class="hljs-number">0</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">dfs</span>(<span class="hljs-params">u, fa, dep</span>):
+    <span class="hljs-keyword">global</span> x, y, depth, l
+    tot[dep - <span class="hljs-number">1</span>] += <span class="hljs-number">1</span>
+    depth = <span class="hljs-built_in">max</span>(depth, dep)
+    <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> tree[u]:
+        <span class="hljs-keyword">if</span> v == fa:
+            <span class="hljs-keyword">continue</span>
+        dfs(v, u, dep + <span class="hljs-number">1</span>)
+
+
+dfs(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+
+<span class="hljs-built_in">print</span>(depth)
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">max</span>(tot))
+</code></pre>
+<h1 id="f">F</h1>
+<p><strong>这题才是真的贪心！！</strong></p>
+<p>由于这个题的物品可以分割，所以不是01背包问题，而是一个典型的贪心</p>
+<p>把每个物品按照性价比降序排序即可</p>
+<pre><code class="language-python">n, t = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+lis = [[<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n)]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+    lis[i][<span class="hljs-number">0</span>], lis[i][<span class="hljs-number">1</span>] = <span class="hljs-built_in">map</span>(<span class="hljs-built_in">int</span>, <span class="hljs-built_in">input</span>().split())
+    lis[i][<span class="hljs-number">2</span>] = lis[i][<span class="hljs-number">1</span>] / lis[i][<span class="hljs-number">0</span>]
+<span class="hljs-comment"># 按性价比降序排序</span>
+<span class="hljs-comment"># 当然也可以手写冒泡</span>
+lis.sort(key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">2</span>], reverse=<span class="hljs-literal">True</span>)
+ans = <span class="hljs-number">0</span>
+idx = <span class="hljs-number">0</span>
+<span class="hljs-keyword">while</span> t &gt; <span class="hljs-number">0</span>:
+    ans += lis[idx][<span class="hljs-number">2</span>] * <span class="hljs-built_in">min</span>(t, lis[idx][<span class="hljs-number">0</span>])
+    t -= <span class="hljs-built_in">min</span>(t, lis[idx][<span class="hljs-number">0</span>])
+    idx += <span class="hljs-number">1</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;%.2f&quot;</span> % ans)
+
+</code></pre>
+
+        
+        
+    </body>
+    </html>

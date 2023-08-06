@@ -1,5 +1,5 @@
 {
-    "C_Cpp.errorSquiggles": "Enabled",
+    "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
         "iostream": "cpp",
         "istream": "cpp",
@@ -102,5 +102,9 @@
         "--header-insertion=iwyu",
         "--pch-storage=memory",
     ],
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
 }
