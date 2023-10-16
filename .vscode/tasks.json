@@ -16,7 +16,7 @@
                 "-DDEBUG",
                 "-fno-ms-extensions",
                 "-lstdc++",
-                "-lm"
+                "-lm",
             ],
             "options": {
                 "cwd": "${fileDirname}"
